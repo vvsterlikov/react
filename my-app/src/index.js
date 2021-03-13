@@ -90,9 +90,10 @@ class Game extends React.Component {
 		this.state = {
 			history: [{
 				squares: Array(9).fill(null),
+				stepIndex: {j:0,k:0},
 			}],
 			stepNumber: 0,
-			xIsNext: true,			
+			xIsNext: true,
 		};
 	}
 	handleClick(i) {
@@ -100,13 +101,16 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		const current = history[history.length-1];
 		const squares = current.squares.slice();
+		//const stepIndex = {i:i%3,j:Math.trunc(i/3)};
 		if (calculateWinner(squares) || squares[i]) {
 			return;
 		}
 		squares[i]=this.state.xIsNext ? 'X' : 'O';
+
 		this.setState({
 			history: history.concat([{
 				squares: squares,
+				stepIndex: {j:i%3,k:Math.trunc(i/3)},
 			}]),
 			stepNumber: history.length,
 			xIsNext : !this.state.xIsNext,
@@ -119,13 +123,15 @@ class Game extends React.Component {
 		});
 	}
 	render() {
+		console.log("Game render");
 		const history = this.state.history;
 		//const current = history[history.length-1];
 		const current = history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
+		const stepIndex = current.stepIndex;
 		const moves = history.map((step,move)=>{
 			const desc = move?
-				'goto move #'+move :
+				'goto move #'+move+"["+history[move-1].stepIndex.j+","+history[move-1].stepIndex.k+"]":
 				'goto game start';
 			return(
 				<li key={move}>
@@ -181,4 +187,16 @@ function calculateWinner(squares) {
       }
     }
     return null;
+  }
+  function lastMoveIndexes(squares, squaresPrev) {
+  	let i = 0;
+  	if (!squaresPrev) {
+  		while (!squares[i] && i<squares.length)
+  			i++;
+  	}
+  	else {
+  		while (squares[i]==squaresPrev[i] && i<squares.length)
+  			i++;
+  	}
+  	return {i:i%3,j:Math.trunc(i/3)};
   }
