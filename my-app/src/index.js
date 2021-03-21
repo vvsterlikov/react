@@ -62,7 +62,22 @@ class Board extends React.Component {
 			status = 'Следующий игрок: '+this.state.xIsNext?'X':'O';
 		}
 		*/
-		return(
+		/*
+const InputForm = React.createElement(
+  "form",
+  { target: "_blank", action: "https://google.com/search" },
+  React.createElement("div", null, "Enter input and click Search"),
+  React.createElement("input", { className: "big-input" }),
+  React.createElement(Button, { label: "Search" })
+);		*/
+		return (
+			<div>
+				{[0,1,2].map((i)=>{
+						return (<div className="board-row">{[0,1,2].map((j)=>{return this.renderSquare(i*3+j)})}</div>)
+					})}
+			</div>
+			);
+			/*
 			<div>
 				<div className="board-row">
 					{this.renderSquare(0)}
@@ -80,7 +95,7 @@ class Board extends React.Component {
 					{this.renderSquare(8)}
 				</div>
 			</div>
-			);
+			*/
 	}
 }
 
@@ -127,6 +142,7 @@ class Game extends React.Component {
 		const history = this.state.history;
 		//const current = history[history.length-1];
 		const current = history[this.state.stepNumber];
+		console.log("sq="+current.squares);
 		const winner = calculateWinner(current.squares);
 		const stepIndex = current.stepIndex;
 		const moves = history.map((step,move)=>{
@@ -187,16 +203,4 @@ function calculateWinner(squares) {
       }
     }
     return null;
-  }
-  function lastMoveIndexes(squares, squaresPrev) {
-  	let i = 0;
-  	if (!squaresPrev) {
-  		while (!squares[i] && i<squares.length)
-  			i++;
-  	}
-  	else {
-  		while (squares[i]==squaresPrev[i] && i<squares.length)
-  			i++;
-  	}
-  	return {i:i%3,j:Math.trunc(i/3)};
   }
